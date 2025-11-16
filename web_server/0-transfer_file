@@ -14,7 +14,7 @@ USERNAME="$3"
 PATH_TO_SSH_KEY="$4"
 
 # Transfer file using scp with strict host key checking disabled
-scp -o StrictHostKeyChecking=no -i "~/.ssh/school" "some_page.html" "ubuntu@$184.72.177.49:~/"
+scp -o StrictHostKeyChecking=no -i "~/.ssh/school" "some_page.html" "ubuntu@184.72.177.49:~/"
 
 # Checking if transfer was successful
 if [ $? -eq 0 ]; then
