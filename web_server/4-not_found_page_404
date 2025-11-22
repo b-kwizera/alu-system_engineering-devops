@@ -5,7 +5,7 @@
 sudo apt-get update 
 sudo apt-get install -y nginx
 
-echo "Holberton School" | sudo tee /etc/nginx/html/index.html
+echo "Holberton School" | sudo tee /var/www/html/index.html
 
 # Create a custom redirect in the default site configuration
 string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/b-kwizera permanent;"
