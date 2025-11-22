@@ -2,12 +2,15 @@
 # Configures Nginx to redirect /redirect_me to another page with 301 Moved Permanently
 
 # Install Nginx if it is not already installed
-sudo apt-get update -y
+sudo apt-get update
 sudo apt-get install -y nginx
 
+echo "Holberton School" | sudo tee /etc/nginx/html/index.html
+
 # Create a custom redirect in the default site configuration
-sudo sed -i '/listen 80 default_server;/a \\trewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
+string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/b-kwizera permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
 
 # Restart Nginx to apply changes
-sudo systemctl restart nginx
+sudo service nginx restart
 
