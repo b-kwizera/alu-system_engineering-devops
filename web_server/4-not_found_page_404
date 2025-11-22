@@ -2,15 +2,22 @@
 # Configures Nginx to serve a custom 404 page with the text "Ceci n'est pas une page"
 
 # Install Nginx if not installed
-sudo apt-get update -y
+sudo apt-get update 
 sudo apt-get install -y nginx
+
+echo "Holberton School" | sudo tee /etc/nginx/html/index.html
+
+# Create a custom redirect in the default site configuration
+string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/b-kwizera permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
 
 # Create custom 404 page
 echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
 
 # Update default Nginx site configuration to use custom 404 page
-sudo sed -i '/server_name _;/a \\terror_page 404 /404.html;' /etc/nginx/sites-available/default
+string_for_replacement="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
+sudo sed -i "s/listen 80 default_server;/$string_for_replacement/" /etc/nginx/sites-enabled/default
 
 # Reload Nginx to apply changes
-sudo systemctl restart nginx
+sudo service nginx restart
 
