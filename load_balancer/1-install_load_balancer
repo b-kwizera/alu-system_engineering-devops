@@ -1,20 +1,18 @@
 #!/usr/bin/env bash
-# Installs and configures HAProxy with roundrobin load balancing for 2 web servers
+# Installs and configures HAProxy load balancer with roundrobin distribution
 
-# Update and install HAProxy
 apt-get update -y
 apt-get install -y haproxy
 
-# Backup default config
-cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak 2>/dev/null || true
+# Enable HAProxy service in init system
+sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy || echo "ENABLED=1" >> /etc/default/haproxy
 
-# Configure HAProxy with roundrobin load balancing
-cat > /etc/haproxy/haproxy.cfg <<'HAPROXY_CONFIG'
-global
-    log /dev/log    local0
-    log /dev/log    local1 notice
+# Configure HAProxy to balance between web-01 and web-02
+cat <<EOF | sudo tee /etc/haproxy/haproxy.cfg > /dev/null
+global 
+    log /dev/log local0
+    log /dev/log local1 notice
     chroot /var/lib/haproxy
-    stats socket /run/haproxy/admin.sock mode 660 level admin
     stats timeout 30s
     user haproxy
     group haproxy
@@ -42,15 +40,9 @@ frontend http_front
 
 backend http_back
     balance roundrobin
-    server web-01 52.207.254.138:80 check
-    server web-02 13.218.21.126:80 check
-HAPROXY_CONFIG
+    server 6845-web-01 184.72.177.49:80 check
+    server 6845-web-02 44.204.152.71:80 check
+EOF
 
-# Enable HAProxy to be started by init script
-echo "ENABLED=1" > /etc/default/haproxy
-
-# Restart HAProxy using service command
-service haproxy restart
-
-# Enable HAProxy to start on boot
-systemctl enable haproxy 2>/dev/null || update-rc.d haproxy defaults
+# Restart HAProxy to apply configuration
+service haproxy start
