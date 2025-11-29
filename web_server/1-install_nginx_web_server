@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# Installs and configures Nginx web server
+# Installs and configures Nginx to serve 'Holberton School'
 
-apt-get update -y
+apt-get update
 apt-get install -y nginx
-echo 'Holberton School' > /var/www/html/index.nginx-debian.html
-service nginx restart
+ufw 'Nginx HTTP'
+echo "Holberton School" | sudo tee /var/www/html/index.html
+
+nginx -t
+service nginx reload
